@@ -5,6 +5,23 @@ function titleCase(name: string): string {
   return name.split('-').map((part) => part ? `${part[0]!.toUpperCase()}${part.slice(1)}` : part).join(' ');
 }
 
+function developmentBaseLabel(config: CodeMementoConfig): string {
+  return config.development.git.baseBranch === '@current'
+    ? 'the current checked-out development branch (`@current`)'
+    : `\`${config.development.git.baseBranch}\``;
+}
+
+function worktreeInstruction(config: CodeMementoConfig): string {
+  const mode = config.development.git.worktree.mode;
+  if (mode === 'required') {
+    return 'Worktree policy: `required`. Before non-trivial implementation, use `docs start <kind> <name>` unless you are already in the compliant linked worktree for that task.';
+  }
+  if (mode === 'preferred') {
+    return 'Worktree policy: `preferred`. Normal work may continue on the current development branch; use `docs start <kind> <name>` when isolation or parallel work is useful.';
+  }
+  return 'Worktree policy: `off`. Continue in the current Git worktree and follow the configured branch policy.';
+}
+
 export function agentsContent(config: CodeMementoConfig, detection: RepositoryDetection): string {
   const stack = [...detection.languages, ...detection.frameworks].join(', ') || 'Unknown / mixed stack';
   return `## CodeMemento repository map
@@ -24,9 +41,9 @@ Detected stack: ${stack}
 
 ### Development workflow
 
-- Base branch: \`${config.development.git.baseBranch}\`; protected branches: ${config.development.git.protectedBranches.map((item) => `\`${item}\``).join(', ') || 'none'}.
-- Branch names describe the work, never the agent. Do not invent \`codex/*\`, \`claude/*\`, or similar agent-owned prefixes.
-- Worktree policy: \`${config.development.git.worktree.mode}\`. For non-trivial work, use \`docs start <kind> <name>\` so branch/worktree/ExecPlan creation follows repository policy.
+- Development base: ${developmentBaseLabel(config)}; protected branches: ${config.development.git.protectedBranches.map((item) => `\`${item}\``).join(', ') || 'none'}.
+- Branch names describe the work, never the agent. Do not invent \`codex/*\`, \`claude/*\`, or similar agent-owned prefixes for new branches.
+- ${worktreeInstruction(config)}
 - Read \`${path.posix.join(config.docs.runbooks, 'development.md')}\` before manually creating branches or worktrees.
 - Git actions: commit=\`${config.development.git.actions.commit}\`, push=\`${config.development.git.actions.push}\`, merge=\`${config.development.git.actions.merge}\`, deleteBranch=\`${config.development.git.actions.deleteBranch}\`. \`ask\` means an explicit user/project instruction is required for that action.
 
@@ -121,7 +138,7 @@ Do not preserve contradictions by copying them forward. Fix the canonical source
     [completedPlansReadme]: '# Completed execution plans\n\nHistorical verified plans live here. They are evidence, not necessarily current truth.\n',
     [qualityReadme]: '# Quality\n\nTesting strategy, acceptance rules, real-device checks, performance criteria, and quality gates belong here.\n',
     [runbooksReadme]: `# Runbooks\n\nKeep repeatable development, deployment, troubleshooting, recovery, and operational procedures here once those procedures are actually decided.\n\n- [Development workflow](${path.posix.basename(developmentRunbook)})\n`,
-    [developmentRunbook]: `# Development workflow\n\nThis repository uses project-owned Git rules. Coding agents must not substitute their own branch naming or workspace conventions.\n\n## Branch policy\n\n- Base branch: \`${config.development.git.baseBranch}\`.\n- Protected branches: ${config.development.git.protectedBranches.map((item) => `\`${item}\``).join(', ') || 'none'}.\n- Feature: \`${config.development.git.branch.patterns.feature}\`\n- Fix: \`${config.development.git.branch.patterns.fix}\`\n- Refactor: \`${config.development.git.branch.patterns.refactor}\`\n- Docs: \`${config.development.git.branch.patterns.docs}\`\n- Chore: \`${config.development.git.branch.patterns.chore}\`\n\nBranch names describe the work, not the coding agent. Avoid agent-specific prefixes such as \`codex/\` or \`claude/\`.\n\n## Worktrees\n\nWorktree mode is \`${config.development.git.worktree.mode}\`. The configured root is \`${config.development.git.worktree.root}\`.\n\nFor a new unit of work, prefer the repository command instead of manually switching branches:\n\n\`\`\`bash\ndocs start feature my-feature\ndocs start fix pagination-bug\n\`\`\`\n\n\`docs start\` verifies a clean source worktree, resolves the configured base branch, creates a project-standard branch, creates a linked worktree when enabled, and creates an active ExecPlan. Feature work also creates the durable Feature package when it does not already exist.\n\n## Finishing\n\nConfigured verification commands:\n${config.development.finish.commands.length ? config.development.finish.commands.map((command) => `- \`${command}\``).join('\n') : '- No extra commands configured; `docs finish` still runs CodeMemento checks.'}\n\nRun \`docs finish\` from the development worktree. It validates CodeMemento, runs the configured verification commands, and completes the matching ExecPlan. It does **not** commit, push, merge, delete branches, or remove worktrees.\n\n## Git action permissions\n\n- Commit: \`${config.development.git.actions.commit}\`\n- Push: \`${config.development.git.actions.push}\`\n- Merge: \`${config.development.git.actions.merge}\`\n- Delete branch: \`${config.development.git.actions.deleteBranch}\`\n\n\`ask\` means the action requires explicit user/project authorization. \`forbid\` means do not perform it.\n`,
+    [developmentRunbook]: `# Development workflow\n\nThis repository uses project-owned Git rules. Coding agents must not substitute their own branch naming or workspace conventions.\n\n## Branch policy\n\n- Development base: ${developmentBaseLabel(config)}.\n- Protected branches: ${config.development.git.protectedBranches.map((item) => `\`${item}\``).join(', ') || 'none'}.\n- Feature: \`${config.development.git.branch.patterns.feature}\`\n- Fix: \`${config.development.git.branch.patterns.fix}\`\n- Refactor: \`${config.development.git.branch.patterns.refactor}\`\n- Docs: \`${config.development.git.branch.patterns.docs}\`\n- Chore: \`${config.development.git.branch.patterns.chore}\`\n\nBranch names describe the work, not the coding agent. Avoid agent-specific prefixes such as \`codex/\` or \`claude/\`.\n\n## Worktrees\n\nWorktree mode is \`${config.development.git.worktree.mode}\`. The configured root is \`${config.development.git.worktree.root}\`.\n\n${worktreeInstruction(config)}\n\nWhen a separate worktree is appropriate, prefer the repository command instead of manually switching branches:\n\n\`\`\`bash\ndocs start feature my-feature\ndocs start fix pagination-bug\n\`\`\`\n\n\`docs start\` verifies a clean source worktree, resolves the configured development base (including \`@current\` when selected), creates a project-standard branch, creates a linked worktree when enabled, and creates an active ExecPlan. Feature work also creates the durable Feature package when it does not already exist.\n\n## Finishing\n\nConfigured verification commands:\n${config.development.finish.commands.length ? config.development.finish.commands.map((command) => `- \`${command}\``).join('\n') : '- No extra commands configured; `docs finish` still runs CodeMemento checks.'}\n\nRun \`docs finish\` from the active development workspace. It validates CodeMemento, runs the configured verification commands, and completes the matching ExecPlan. It does **not** commit, push, merge, delete branches, or remove worktrees.\n\n## Git action permissions\n\n- Commit: \`${config.development.git.actions.commit}\`\n- Push: \`${config.development.git.actions.push}\`\n- Merge: \`${config.development.git.actions.merge}\`\n- Delete branch: \`${config.development.git.actions.deleteBranch}\`\n\n\`ask\` means the action requires explicit user/project authorization. \`forbid\` means do not perform it.\n`,
     [referencesReadme]: '# References\n\nExternal material, compatibility notes, schemas, migration maps, and factual references belong here.\n',
     [generatedReadme]: '# Generated documentation\n\nGenerated material belongs here and is never more authoritative than source code, tests, or human-reviewed canonical documentation.\n',
   };

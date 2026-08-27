@@ -19,7 +19,8 @@ CodeMemento treats development workflow as repository-owned policy in
 
 Repositories can define:
 
-- base and protected branches;
+- a fixed development base or `@current` for repositories whose primary worktree remains on the active development line;
+- protected branches;
 - work-oriented branch patterns;
 - required/preferred/off linked-worktree behavior;
 - verification commands executed by `docs finish`;
@@ -31,6 +32,7 @@ policy executable. Branch names describe the work rather than the coding agent.
 ## Consequences
 
 - Different coding agents share one deterministic branch/worktree convention.
+- Repositories that merge release changes into a current development line can keep that line checked out and derive optional parallel worktrees from it rather than forcing the primary worktree back to release.
 - Parallel tasks can use isolated worktrees without switching the primary
   repository workspace.
 - Existing repositories can adopt the policy incrementally because enforcement

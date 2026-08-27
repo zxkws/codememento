@@ -58,6 +58,38 @@ describe('development workflow', () => {
     expect(config.governance.gitWorkflow).toBe('warn');
   });
 
+  it('uses the current checked-out development branch when baseBranch is @current', async () => {
+    const { root } = await gitRepo();
+    await git(root, ['switch', '-c', 'codex/current-line']);
+    await writeFile(path.join(root, 'current-line.txt'), 'current branch content', 'utf8');
+    await git(root, ['add', 'current-line.txt']);
+    await git(root, ['commit', '-m', 'current line']);
+
+    const config = await loadConfig(root);
+    config.development.git.baseBranch = '@current';
+    config.development.git.fetchBeforeStart = false;
+    config.development.git.worktree.mode = 'preferred';
+
+    const started = await startDevelopmentWork(root, config, 'feature', 'parallel task');
+    expect(started.baseRef).toBe('codex/current-line');
+    await expect(readFile(path.join(started.worktree, 'current-line.txt'), 'utf8')).resolves.toBe('current branch content');
+  });
+
+  it('allows the primary current development branch while still treating protected branches as protected', async () => {
+    const { root } = await gitRepo();
+    await git(root, ['switch', '-c', 'codex/current-line']);
+    const config = await loadConfig(root);
+    config.development.git.baseBranch = '@current';
+    config.development.git.worktree.mode = 'preferred';
+    config.governance.gitWorkflow = 'error';
+    await createPlan(root, config, 'current line work');
+
+    const health = await doctor(root, config);
+    expect(health.diagnostics.some((item) => item.code === 'branch-name-policy')).toBe(false);
+    const finished = await finishDevelopmentWork(root, config, 'current line work');
+    expect(finished.branch).toBe('codex/current-line');
+  });
+
   it('creates a standard branch, linked worktree, feature, and execution plan', async () => {
     const { root } = await gitRepo();
     const config = await loadConfig(root);

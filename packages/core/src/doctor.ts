@@ -135,13 +135,18 @@ async function checkGitWorkflow(root: string, config: CodeMementoConfig): Promis
   if (!workspace.repository) return diagnostics;
 
   const { remote, baseBranch, branch, protectedBranches, worktree } = config.development.git;
-  const baseExists = await gitRefExists(root, `refs/heads/${baseBranch}`)
-    || await gitRefExists(root, `refs/remotes/${remote}/${baseBranch}`);
+  const currentBase = baseBranch === '@current';
+  const baseExists = currentBase
+    ? Boolean(workspace.branch)
+    : await gitRefExists(root, `refs/heads/${baseBranch}`)
+      || await gitRefExists(root, `refs/remotes/${remote}/${baseBranch}`);
   if (!baseExists) {
     diagnostics.push({
       code: 'git-base-branch',
       severity,
-      message: `Configured base branch is not available locally or on ${remote}: ${baseBranch}`,
+      message: currentBase
+        ? 'Configured base branch @current requires a checked-out branch.'
+        : `Configured base branch is not available locally or on ${remote}: ${baseBranch}`,
     });
   }
 
@@ -157,7 +162,8 @@ async function checkGitWorkflow(root: string, config: CodeMementoConfig): Promis
     return diagnostics;
   }
 
-  if (branch.required && !branchMatchesPolicy(config, workspace.branch)) {
+  const primaryCurrentBase = currentBase && !workspace.linkedWorktree;
+  if (branch.required && !primaryCurrentBase && !branchMatchesPolicy(config, workspace.branch)) {
     diagnostics.push({
       code: 'branch-name-policy',
       severity,

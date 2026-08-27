@@ -89,6 +89,11 @@ such as `codex/station-attachments` or `claude/station-attachments`.
 completes the matching ExecPlan. It deliberately does not commit, push, merge,
 delete branches, or remove worktrees.
 
+For repositories that keep the primary worktree on the current development line,
+set `development.git.baseBranch: "@current"`. In that mode `docs start` creates
+separate worktrees from the currently checked-out branch instead of a fixed
+release/integration branch.
+
 ## Adopt an existing repository safely
 
 Before changing an established project, inspect it:

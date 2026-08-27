@@ -55,9 +55,9 @@ Detected stack: JavaScript/TypeScript
 
 ### Development workflow
 
-- Base branch: `main`; protected branches: `main`, `release`.
-- Branch names describe the work, never the agent. Do not invent `codex/*`, `claude/*`, or similar agent-owned prefixes.
-- Worktree policy: `required`. For non-trivial work, use `docs start <kind> <name>` so branch/worktree/ExecPlan creation follows repository policy.
+- Development base: `main`; protected branches: `main`, `release`.
+- Branch names describe the work, never the agent. Do not invent `codex/*`, `claude/*`, or similar agent-owned prefixes for new branches.
+- Worktree policy: `required`. Before non-trivial implementation, use `docs start <kind> <name>` unless you are already in the compliant linked worktree for that task.
 - Read `docs/runbooks/development.md` before manually creating branches or worktrees.
 - Git actions: commit=`ask`, push=`ask`, merge=`ask`, deleteBranch=`ask`. `ask` means an explicit user/project instruction is required for that action.
 

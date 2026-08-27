@@ -2,7 +2,14 @@
 
 All notable user-facing changes will be documented here.
 
-## 0.2.0 - Unreleased
+## 0.2.1 - 2026-08-27
+
+- Added `baseBranch: "@current"` for repositories whose primary worktree stays on the active development line.
+- `docs start` can now branch linked worktrees from the currently checked-out development branch.
+- Primary `@current` workspaces may keep an established branch name while new linked worktree branches still follow project naming policy.
+- Improved AGENTS/runbook guidance for `preferred` worktrees so normal work may continue on the current development branch.
+
+## 0.2.0 - 2026-08-27
 
 - Added project-owned Git development workflow configuration.
 - Added branch naming patterns, protected branches, worktree policy, and Git action permissions.

@@ -14,6 +14,12 @@ const execFileAsync = promisify(execFile);
 
 async function resolveBaseRef(root: string, config: CodeMementoConfig): Promise<string> {
   const { remote, baseBranch, fetchBeforeStart } = config.development.git;
+  if (baseBranch === '@current') {
+    const workspace = await inspectGitWorkspace(root);
+    if (!workspace.branch) throw new Error('Configured base branch @current requires a checked-out branch.');
+    return workspace.branch;
+  }
+
   const remoteExists = Boolean(await tryGit(root, ['remote', 'get-url', remote]));
   if (fetchBeforeStart && remoteExists) await runGit(root, ['fetch', remote]);
 
@@ -127,7 +133,8 @@ export async function finishDevelopmentWork(
   if (config.development.git.protectedBranches.includes(workspace.branch)) {
     throw new Error(`Refusing to finish work directly on protected branch: ${workspace.branch}`);
   }
-  if (config.development.git.branch.required && !branchMatchesPolicy(config, workspace.branch)) {
+  const primaryCurrentBase = config.development.git.baseBranch === '@current' && !workspace.linkedWorktree;
+  if (config.development.git.branch.required && !primaryCurrentBase && !branchMatchesPolicy(config, workspace.branch)) {
     throw new Error(`Current branch does not match configured project branch patterns: ${workspace.branch}`);
   }
   if (config.development.git.worktree.mode === 'required' && !workspace.linkedWorktree) {

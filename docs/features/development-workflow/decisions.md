@@ -15,3 +15,7 @@ Default patterns use `feature/`, `fix/`, `refactor/`, `docs/`, and `chore/`. Pro
 ## 2026-08-27 — Keep config version 1 backward compatible
 
 The new development fields are additive and have defaults. A v0.1 repository can load under v0.2 without rewriting its configuration before the user chooses a stricter project-specific policy.
+
+## 2026-08-27 — Support a current development line as the worktree base
+
+Some repositories intentionally keep the primary worktree on an active development branch and only merge that line into the release branch when shipping. For these repositories, `baseBranch: "@current"` means `docs start` derives isolated worktrees from the current checked-out development branch. The primary development line is exempt from new-branch naming enforcement, while protected branches and newly-created linked worktree branches remain governed.
