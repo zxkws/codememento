@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
@@ -37,6 +37,14 @@ async function readPackedManifest(tarball) {
 
 const temp = await mkdtemp(path.join(os.tmpdir(), 'codememento-pack-check-'));
 try {
+  const sourceCore = JSON.parse(await readFile(path.join(root, 'packages/core/package.json'), 'utf8'));
+  const sourceCli = JSON.parse(await readFile(path.join(root, 'packages/cli/package.json'), 'utf8'));
+  const builtCliVersion = await run('node', ['packages/cli/dist/cli.js', '--version']);
+  assert(
+    builtCliVersion === sourceCli.version,
+    `Built CLI version is stale: package.json=${sourceCli.version}, dist=${builtCliVersion || 'missing'}`,
+  );
+
   await run('pnpm', ['--filter', '@codememento/core', 'pack', '--pack-destination', temp]);
   await run('pnpm', ['--filter', '@codememento/cli', 'pack', '--pack-destination', temp]);
 
@@ -50,6 +58,8 @@ try {
 
   const core = await readPackedManifest(coreTarball);
   const cli = await readPackedManifest(cliTarball);
+  assert(core.version === sourceCore.version, `Packed core version is stale: source=${sourceCore.version}, packed=${core.version}`);
+  assert(cli.version === sourceCli.version, `Packed CLI version is stale: source=${sourceCli.version}, packed=${cli.version}`);
   assert(core.version === cli.version, `Packed versions differ: core=${core.version}, cli=${cli.version}`);
   assert(
     cli.dependencies?.['@codememento/core'] === core.version,

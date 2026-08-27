@@ -1,6 +1,6 @@
 {
   "name": "@codememento/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Core library for CodeMemento durable repository memory.",
   "keywords": [
     "ai",

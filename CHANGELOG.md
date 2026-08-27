@@ -2,6 +2,11 @@
 
 All notable user-facing changes will be documented here.
 
+## 0.2.3 - 2026-08-27
+
+- Extended `pnpm pack:check` to reject stale CLI build output when `dist/cli.js --version` does not equal the package version.
+- Verify packed core and CLI versions against their source manifests in addition to checking dependency rewriting and the executable entry.
+
 ## 0.2.2 - 2026-08-27
 
 - Fixed manual npm publication so the public CLI package depends on a real core version instead of the private `workspace:*` protocol.
