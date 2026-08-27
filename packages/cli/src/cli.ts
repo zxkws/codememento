@@ -18,7 +18,7 @@ import {
   loadConfig,
   repositoryStatus,
   syncAdapters,
-} from '@agentdocs/core';
+} from '@codememento/core';
 
 const program = new Command();
 
@@ -32,7 +32,7 @@ function rootFrom(options: { cwd?: string }): string {
 }
 
 async function requireConfig(root: string) {
-  if (!(await configExists(root))) throw new Error('AgentDocs is not initialized. Run `docs init` first.');
+  if (!(await configExists(root))) throw new Error('CodeMemento is not initialized. Run `docs init` first.');
   return loadConfig(root);
 }
 
@@ -43,7 +43,7 @@ function printError(error: unknown): never {
 }
 
 function addCwd(command: Command): Command {
-  return command.option('-C, --cwd <path>', 'run as if AgentDocs was started in this directory');
+  return command.option('-C, --cwd <path>', 'run as if CodeMemento was started in this directory');
 }
 
 addCwd(program.command('inspect').description('inspect an existing repository without modifying it'))
@@ -57,7 +57,7 @@ addCwd(program.command('inspect').description('inspect an existing repository wi
         return;
       }
       console.log(pc.bold(`Documentation maturity: ${result.maturity} (${result.score}/100)`));
-      console.log(`AgentDocs initialized: ${result.initialized ? 'yes' : 'no'}`);
+      console.log(`CodeMemento initialized: ${result.initialized ? 'yes' : 'no'}`);
       const stack = [...result.detection.languages, ...result.detection.frameworks].join(', ') || 'unknown stack';
       console.log(`Detected: ${stack}${result.detection.monorepo ? ' (monorepo)' : ''}`);
       if (result.instructionFiles.length) console.log(`Instructions: ${result.instructionFiles.join(', ')}`);
@@ -73,12 +73,12 @@ addCwd(program.command('inspect').description('inspect an existing repository wi
     }
   });
 
-addCwd(program.command('init').description('initialize AgentDocs in a repository'))
+addCwd(program.command('init').description('initialize CodeMemento in a repository'))
   .action(async (options) => {
     try {
       const root = rootFrom(options);
       const result = await initRepository(root);
-      console.log(pc.bold('AgentDocs initialized'));
+      console.log(pc.bold('CodeMemento initialized'));
       const stack = [...result.detection.languages, ...result.detection.frameworks].join(', ') || 'unknown stack';
       console.log(`Detected: ${stack}${result.detection.monorepo ? ' (monorepo)' : ''}`);
       if (result.adoptedExisting) console.log(pc.green('✓ Mature existing documentation detected; adopted without adding documentation templates.'));
@@ -244,10 +244,10 @@ addCwd(program.command('check').description('CI-friendly validation; exits non-z
         console.log(`${mark} ${item.message}${item.path ? pc.dim(` (${item.path})`) : ''}`);
       }
       if (errors.length) {
-        console.error(pc.red(`AgentDocs check failed with ${errors.length} error(s).`));
+        console.error(pc.red(`CodeMemento check failed with ${errors.length} error(s).`));
         process.exitCode = 1;
       } else {
-        console.log(pc.green('AgentDocs check passed.'));
+        console.log(pc.green('CodeMemento check passed.'));
       }
     } catch (error) {
       printError(error);

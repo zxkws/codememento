@@ -4,7 +4,7 @@ import { BUILTIN_ADAPTERS } from './adapters.js';
 import { detectRepository } from './detect.js';
 import { exists, readTextIfExists } from './fs.js';
 import { renderManagedBlock } from './managed-block.js';
-import type { AgentDocsConfig, Diagnostic, DoctorResult, Severity } from './types.js';
+import type { CodeMementoConfig, Diagnostic, DoctorResult, Severity } from './types.js';
 
 function governanceSeverity(value: 'off' | 'warn' | 'error'): Severity | undefined {
   if (value === 'off') return undefined;
@@ -59,7 +59,7 @@ async function checkLinks(root: string, docsRoot: string, severity: Severity): P
   return diagnostics;
 }
 
-async function checkActivePlans(root: string, config: AgentDocsConfig): Promise<Diagnostic[]> {
+async function checkActivePlans(root: string, config: CodeMementoConfig): Promise<Diagnostic[]> {
   const diagnostics: Diagnostic[] = [];
   const shapeSeverity = governanceSeverity(config.governance.activePlanShape);
   const completedSeverity = governanceSeverity(config.governance.completedPlanInActive);
@@ -101,7 +101,7 @@ async function checkActivePlans(root: string, config: AgentDocsConfig): Promise<
   return diagnostics;
 }
 
-async function checkRetiredPaths(root: string, config: AgentDocsConfig): Promise<Diagnostic[]> {
+async function checkRetiredPaths(root: string, config: CodeMementoConfig): Promise<Diagnostic[]> {
   const severity = governanceSeverity(config.governance.retiredPaths);
   if (!severity || config.retiredPaths.length === 0) return [];
   const diagnostics: Diagnostic[] = [];
@@ -118,11 +118,11 @@ async function checkRetiredPaths(root: string, config: AgentDocsConfig): Promise
   return diagnostics;
 }
 
-export async function doctor(root: string, config: AgentDocsConfig): Promise<DoctorResult> {
+export async function doctor(root: string, config: CodeMementoConfig): Promise<DoctorResult> {
   const diagnostics: Diagnostic[] = [];
 
   for (const required of [config.canonicalInstructions, path.join(config.docs.root, 'index.md')]) {
-    if (!(await exists(path.join(root, required)))) diagnostics.push({ code: 'missing-structure', severity: 'error', message: `Missing required AgentDocs path: ${required}`, path: required });
+    if (!(await exists(path.join(root, required)))) diagnostics.push({ code: 'missing-structure', severity: 'error', message: `Missing required CodeMemento path: ${required}`, path: required });
   }
 
   const structureSeverity = governanceSeverity(config.governance.missingStructure);
@@ -194,6 +194,6 @@ export async function doctor(root: string, config: AgentDocsConfig): Promise<Doc
   return { diagnostics, score };
 }
 
-export async function checkRepository(root: string, config: AgentDocsConfig): Promise<DoctorResult> {
+export async function checkRepository(root: string, config: CodeMementoConfig): Promise<DoctorResult> {
   return doctor(root, config);
 }

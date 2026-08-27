@@ -1,15 +1,15 @@
 import path from 'node:path';
-import type { AgentDocsConfig, RepositoryDetection } from './types.js';
+import type { CodeMementoConfig, RepositoryDetection } from './types.js';
 
 function titleCase(name: string): string {
   return name.split('-').map((part) => part ? `${part[0]!.toUpperCase()}${part.slice(1)}` : part).join(' ');
 }
 
-export function agentsContent(config: AgentDocsConfig, detection: RepositoryDetection): string {
+export function agentsContent(config: CodeMementoConfig, detection: RepositoryDetection): string {
   const stack = [...detection.languages, ...detection.frameworks].join(', ') || 'Unknown / mixed stack';
-  return `## AgentDocs repository map
+  return `## CodeMemento repository map
 
-This repository uses AgentDocs. Treat repository documentation as durable
+This repository uses CodeMemento. Treat repository documentation as durable
 project knowledge and prefer it over assumptions from chat history.
 
 Detected stack: ${stack}
@@ -56,7 +56,7 @@ documentation or code can answer the question. Preserve user-authored docs and
 follow more specific instructions deeper in the repository.`;
 }
 
-export function docFiles(config: AgentDocsConfig): Record<string, string> {
+export function docFiles(config: CodeMementoConfig): Record<string, string> {
   const join = path.posix.join;
   const indexPath = join(config.docs.root, 'index.md');
   const productOverview = join(config.docs.product, 'overview.md');

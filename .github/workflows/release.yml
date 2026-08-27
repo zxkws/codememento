@@ -23,5 +23,5 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
-      - run: pnpm --filter @agentdocs/core publish --no-git-checks
-      - run: pnpm --filter @agentdocs/cli publish --no-git-checks
+      - run: pnpm --filter @codememento/core publish --no-git-checks --provenance
+      - run: pnpm --filter @codememento/cli publish --no-git-checks --provenance

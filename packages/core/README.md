@@ -1,6 +1,6 @@
-# @agentdocs/core
+# @codememento/core
 
-Reusable core library for **AgentDocs**.
+Reusable core library for **CodeMemento**.
 
 It provides deterministic repository inspection, initialization, managed
 instruction adapters, Feature/ExecPlan/Change lifecycles, ADR creation,

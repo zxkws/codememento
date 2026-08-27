@@ -3,9 +3,9 @@ import { BUILTIN_ADAPTERS } from './adapters.js';
 import { detectRepository } from './detect.js';
 import { readTextIfExists, writeText } from './fs.js';
 import { renderManagedBlock, upsertManagedBlock } from './managed-block.js';
-import type { AgentDocsConfig, SyncResult } from './types.js';
+import type { CodeMementoConfig, SyncResult } from './types.js';
 
-export async function syncAdapters(root: string, config: AgentDocsConfig): Promise<SyncResult> {
+export async function syncAdapters(root: string, config: CodeMementoConfig): Promise<SyncResult> {
   const detection = await detectRepository(root);
   const result: SyncResult = { updated: [], unchanged: [] };
 

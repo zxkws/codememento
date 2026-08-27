@@ -2,9 +2,9 @@
 
 All notable user-facing changes will be documented here.
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-08-27
 
-- Added `@agentdocs/core` and the `@agentdocs/cli` `docs` executable.
+- Added `@codememento/core` and the `@codememento/cli` `docs` executable.
 - Added read-only repository maturity inspection and JSON output.
 - Added safe, idempotent initialization with mature-repository adoption mode.
 - Added managed Codex/AGENTS, Claude, Copilot, Gemini, and optional Cursor adapters.

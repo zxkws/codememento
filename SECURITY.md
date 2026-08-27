@@ -12,7 +12,7 @@ content in a vulnerability report.
 
 ## Security model
 
-AgentDocs is offline-first. Its deterministic core reads and writes repository
+CodeMemento is offline-first. Its deterministic core reads and writes repository
 files requested by the user and does not require an AI provider or network
 connection. `docs inspect` is read-only. Commands that initialize or manage
 documentation mutate files inside the selected repository and validate

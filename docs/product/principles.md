@@ -1,6 +1,6 @@
 # Product principles
 
-AgentDocs makes repository knowledge durable across coding agents.
+CodeMemento makes repository knowledge durable across coding agents.
 
 ## Principles
 

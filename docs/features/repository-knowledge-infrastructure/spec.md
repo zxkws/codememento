@@ -2,7 +2,7 @@
 
 ## What
 
-AgentDocs installs and governs an AI-native documentation foundation in an
+CodeMemento installs and governs an AI-native documentation foundation in an
 existing or new source repository. It must make durable repository knowledge
 discoverable by coding agents without making chat history the source of truth.
 

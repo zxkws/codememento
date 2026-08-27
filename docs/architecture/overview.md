@@ -1,17 +1,17 @@
 # Architecture overview
 
-AgentDocs is a TypeScript monorepo with two publishable packages.
+CodeMemento is a TypeScript monorepo with two publishable packages.
 
 ## Packages
 
-### `@agentdocs/core`
+### `@codememento/core`
 
 Owns configuration, repository detection, templates, managed blocks, adapters,
 read-only inspection, Feature/ExecPlan/Change lifecycle operations, ADR
 creation, repository status, diagnostics, and CI checks. Core has no
 interactive UI and can be embedded by other tools.
 
-### `@agentdocs/cli`
+### `@codememento/cli`
 
 Owns the `docs` executable, argument parsing, human-readable output, and exit
 codes. It delegates repository behavior to core.
@@ -22,7 +22,7 @@ An initialized target repository contains:
 
 ```text
 AGENTS.md
-.agentdocs/config.yaml
+.codememento/config.yaml
 docs/
   index.md
   product/
@@ -43,22 +43,22 @@ Optional adapters create thin agent-specific instruction files such as
 
 ## Managed content
 
-AgentDocs never owns an entire instruction file. Each adapter writes a marked
+CodeMemento never owns an entire instruction file. Each adapter writes a marked
 region:
 
 ```text
-<!-- agentdocs:<adapter>:start -->
+<!-- codememento:<adapter>:start -->
 ...
-<!-- agentdocs:<adapter>:end -->
+<!-- codememento:<adapter>:end -->
 ```
 
 `sync` replaces only that region. Text before and after it is preserved.
 
 ## Adoption and inspection
 
-`docs inspect` is deliberately independent of AgentDocs configuration. It can
+`docs inspect` is deliberately independent of CodeMemento configuration. It can
 assess an existing repository before any files are written and recognizes
-common AI-native documentation signals rather than only AgentDocs-generated
+common AI-native documentation signals rather than only CodeMemento-generated
 files.
 
 `docs init` then adds missing foundation files and managed adapter blocks while

@@ -18,7 +18,7 @@ import {
 const roots: string[] = [];
 
 async function tempRepo(): Promise<string> {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'agentdocs-'));
+  const root = await mkdtemp(path.join(os.tmpdir(), 'codememento-'));
   roots.push(root);
   await writeFile(path.join(root, 'package.json'), JSON.stringify({ dependencies: { vue: '^3.0.0' } }), 'utf8');
   return root;
@@ -36,7 +36,7 @@ describe('repository lifecycle', () => {
     const agents = await readFile(path.join(root, 'AGENTS.md'), 'utf8');
     expect(result.detection.frameworks).toContain('Vue');
     expect(agents).toContain('Keep me.');
-    expect(agents).toContain('agentdocs:agents:start');
+    expect(agents).toContain('codememento:agents:start');
   });
 
   it('creates, validates, and archives a change', async () => {
@@ -122,7 +122,7 @@ describe('repository lifecycle', () => {
   it('respects customized documentation paths on repeated initialization', async () => {
     const root = await tempRepo();
     await initRepository(root);
-    const configPath = path.join(root, '.agentdocs', 'config.yaml');
+    const configPath = path.join(root, '.codememento', 'config.yaml');
     const raw = await readFile(configPath, 'utf8');
     await writeFile(configPath, raw.replaceAll('docs/', 'knowledge/').replace('root: docs\n', 'root: knowledge\n'), 'utf8');
 
@@ -135,7 +135,7 @@ describe('repository lifecycle', () => {
   it('rejects configuration paths that escape the repository', async () => {
     const root = await tempRepo();
     await initRepository(root);
-    const configPath = path.join(root, '.agentdocs', 'config.yaml');
+    const configPath = path.join(root, '.codememento', 'config.yaml');
     const raw = await readFile(configPath, 'utf8');
     await writeFile(configPath, raw.replace('root: docs\n', 'root: ../outside\n'), 'utf8');
     await expect(loadConfig(root)).rejects.toThrow(/repository-relative path/);

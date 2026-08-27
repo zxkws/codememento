@@ -27,7 +27,7 @@ async function findVerificationFiles(root: string): Promise<string[]> {
   if (await exists(packageJson)) {
     try {
       const parsed = JSON.parse(await readFile(packageJson, 'utf8')) as { scripts?: Record<string, string> };
-      if (Object.entries(parsed.scripts ?? {}).some(([name, value]) => /docs|agentdocs/i.test(`${name} ${value}`))) {
+      if (Object.entries(parsed.scripts ?? {}).some(([name, value]) => /docs|codememento/i.test(`${name} ${value}`))) {
         result.push('package.json#scripts');
       }
     } catch {

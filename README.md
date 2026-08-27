@@ -1,30 +1,26 @@
-# AgentDocs
+# CodeMemento
 
-**AI-native documentation infrastructure for any repository.**
+**Durable repository memory for AI coding agents.**
 
-AgentDocs turns repository documentation into durable project knowledge that
-coding agents can discover, follow, maintain, and validate. It is offline-first,
-preserves existing documentation, and ships as the `docs` CLI.
+CodeMemento turns repository knowledge into versioned memory that coding agents
+can discover, follow, maintain, validate, and hand off across sessions. It is
+offline-first, preserves existing documentation, and ships as the `docs` CLI.
 
 ```bash
-npx @agentdocs/cli init
+npx @codememento/cli init
 ```
 
 Or install it globally:
 
 ```bash
-npm install -g @agentdocs/cli
+npm install -g @codememento/cli
 docs init
 ```
 
-> Package publication is not part of this repository bootstrap; until a first
-> npm release exists, run the CLI from this workspace with pnpm or a packed
-> tarball.
-
-## Why AgentDocs?
+## Why CodeMemento?
 
 AI coding agents are good at reading code, but project intent is usually spread
-across chats, tickets, stale READMEs, and individual memory. AgentDocs keeps the
+across chats, tickets, stale READMEs, and individual memory. CodeMemento keeps the
 durable part in Git and gives agents a consistent map to it.
 
 It separates:
@@ -62,17 +58,17 @@ Every command supports `-C, --cwd <path>`. `inspect`, `status`, `doctor`, and
 Before changing an established project, inspect it:
 
 ```bash
-npx @agentdocs/cli inspect
+npx @codememento/cli inspect
 ```
 
-`inspect` is read-only and does not require AgentDocs to be initialized. It
+`inspect` is read-only and does not require CodeMemento to be initialized. It
 recognizes common AI-native documentation signals such as `AGENTS.md`, a docs
 index, product/architecture knowledge, ADRs, feature packages, active/completed
 execution plans, runbooks, quality docs, generated docs, and deterministic docs
 verification.
 
-If the repository already has a mature structure, AgentDocs can be adopted
-incrementally. In adoption mode, `docs init` writes AgentDocs configuration and
+If the repository already has a mature structure, CodeMemento can be adopted
+incrementally. In adoption mode, `docs init` writes CodeMemento configuration and
 managed adapter regions but does **not** add documentation templates to the
 existing knowledge system.
 
@@ -83,7 +79,7 @@ AGENTS.md
 CLAUDE.md
 GEMINI.md
 .github/copilot-instructions.md
-.agentdocs/
+.codememento/
   config.yaml
 docs/
   index.md
@@ -106,13 +102,13 @@ only when a repository chooses to use those workflows; they are not part of the
 default documentation ceremony.
 
 Agent-specific files are **thin adapters**. `AGENTS.md` is the canonical
-repository map by default. AgentDocs does not replace entire instruction files;
+repository map by default. CodeMemento does not replace entire instruction files;
 it maintains only blocks marked like:
 
 ```html
-<!-- agentdocs:claude:start -->
+<!-- codememento:claude:start -->
 ...managed content...
-<!-- agentdocs:claude:end -->
+<!-- codememento:claude:end -->
 ```
 
 Text outside those markers belongs to the repository owner and is preserved by
@@ -147,7 +143,7 @@ The required artifacts are validated and the workspace is moved to
 
 ## Configuration
 
-`.agentdocs/config.yaml` is the machine-readable contract for the CLI:
+`.codememento/config.yaml` is the machine-readable contract for the CLI:
 
 ```yaml
 version: 1
@@ -217,7 +213,7 @@ retiredPaths: []
 The simplest CI gate is:
 
 ```bash
-npx @agentdocs/cli check
+npx @codememento/cli check
 ```
 
 `docs check` exits non-zero when diagnostics configured as errors are found.
@@ -237,8 +233,8 @@ pnpm check
 
 The workspace contains:
 
-- `@agentdocs/core` — reusable repository model and governance engine.
-- `@agentdocs/cli` — the `docs` executable and terminal UX.
+- `@codememento/core` — reusable repository model and governance engine.
+- `@codememento/cli` — the `docs` executable and terminal UX.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and
 [architecture overview](docs/architecture/overview.md).

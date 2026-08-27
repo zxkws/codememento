@@ -19,7 +19,7 @@ describe('managed blocks', () => {
   });
 
   it('refuses to guess when managed markers are malformed', () => {
-    const malformed = '# User rules\n\n<!-- agentdocs:agents:start -->\nManaged text\n';
-    expect(() => upsertManagedBlock(malformed, 'agents', 'Replacement')).toThrow(/Malformed AgentDocs managed block/);
+    const malformed = '# User rules\n\n<!-- codememento:agents:start -->\nManaged text\n';
+    expect(() => upsertManagedBlock(malformed, 'agents', 'Replacement')).toThrow(/Malformed CodeMemento managed block/);
   });
 });

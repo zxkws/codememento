@@ -1,8 +1,8 @@
-# AgentDocs repository instructions
+# CodeMemento repository instructions
 
-AgentDocs is an AI-native documentation infrastructure CLI. The public CLI is
-`docs`, published from `@agentdocs/cli`; reusable logic lives in
-`@agentdocs/core`.
+CodeMemento is an AI-native documentation infrastructure CLI. The public CLI is
+`docs`, published from `@codememento/cli`; reusable logic lives in
+`@codememento/core`.
 
 ## Required reading
 
@@ -25,10 +25,10 @@ core. Keep adapter implementations deterministic and offline by default.
 ## Compatibility rules
 
 - Never overwrite user-authored instruction files wholesale.
-- AgentDocs-owned content must stay inside managed markers.
+- CodeMemento-owned content must stay inside managed markers.
 - `docs init` and `docs sync` must be idempotent.
 - Existing documentation must be preserved unless a command explicitly moves
-  an AgentDocs-managed change during archive.
+  a CodeMemento-managed change during archive.
 - The default workflow must not require an AI API key or network access.
 
 ## Documentation
@@ -37,10 +37,10 @@ When public behavior changes, update README and relevant files under `docs/`.
 Architecture-affecting decisions should get an ADR under
 `docs/architecture/adr/`.
 
-<!-- agentdocs:agents:start -->
-## AgentDocs repository map
+<!-- codememento:agents:start -->
+## CodeMemento repository map
 
-This repository uses AgentDocs. Treat repository documentation as durable
+This repository uses CodeMemento. Treat repository documentation as durable
 project knowledge and prefer it over assumptions from chat history.
 
 Detected stack: JavaScript/TypeScript
@@ -85,4 +85,4 @@ update durable canonical docs when described behavior changed.
 Do not invent APIs, business rules, or architecture facts when repository
 documentation or code can answer the question. Preserve user-authored docs and
 follow more specific instructions deeper in the repository.
-<!-- agentdocs:agents:end -->
+<!-- codememento:agents:end -->

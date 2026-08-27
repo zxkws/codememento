@@ -2,7 +2,7 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import YAML from 'yaml';
 import { z } from 'zod';
-import type { AgentDocsConfig } from './types.js';
+import type { CodeMementoConfig } from './types.js';
 
 const repoPath = z.string().min(1).refine((value) => {
   if (path.isAbsolute(value) || /^[A-Za-z]:[\\/]/.test(value)) return false;
@@ -54,7 +54,7 @@ const configSchema = z.object({
   retiredPaths: z.array(z.string()),
 });
 
-export const DEFAULT_CONFIG: AgentDocsConfig = {
+export const DEFAULT_CONFIG: CodeMementoConfig = {
   version: 1,
   canonicalInstructions: 'AGENTS.md',
   docs: {
@@ -101,10 +101,10 @@ export const DEFAULT_CONFIG: AgentDocsConfig = {
 };
 
 export function configPath(root: string): string {
-  return path.join(root, '.agentdocs', 'config.yaml');
+  return path.join(root, '.codememento', 'config.yaml');
 }
 
-export async function defaultConfigFor(root: string, options: { adoptExisting?: boolean } = {}): Promise<AgentDocsConfig> {
+export async function defaultConfigFor(root: string, options: { adoptExisting?: boolean } = {}): Promise<CodeMementoConfig> {
   const config = structuredClone(DEFAULT_CONFIG);
   if (options.adoptExisting) config.governance.missingStructure = 'off';
   const legacyAdr = path.join(root, 'docs', 'adr');
@@ -137,7 +137,7 @@ export async function writeDefaultConfig(root: string, options: { adoptExisting?
   await writeFile(file, YAML.stringify(await defaultConfigFor(root, options)), 'utf8');
 }
 
-export async function loadConfig(root: string): Promise<AgentDocsConfig> {
+export async function loadConfig(root: string): Promise<CodeMementoConfig> {
   const raw = await readFile(configPath(root), 'utf8');
-  return configSchema.parse(YAML.parse(raw)) as AgentDocsConfig;
+  return configSchema.parse(YAML.parse(raw)) as CodeMementoConfig;
 }

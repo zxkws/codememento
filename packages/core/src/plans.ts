@@ -1,11 +1,11 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import type { AgentDocsConfig, ChangeResult } from './types.js';
+import type { CodeMementoConfig, ChangeResult } from './types.js';
 import { exists, writeText } from './fs.js';
 import { slugify } from './naming.js';
 import { planTemplate } from './templates.js';
 
-export async function createPlan(root: string, config: AgentDocsConfig, input: string): Promise<ChangeResult> {
+export async function createPlan(root: string, config: CodeMementoConfig, input: string): Promise<ChangeResult> {
   const name = slugify(input, 'Plan name');
   const filename = `${new Date().toISOString().slice(0, 10)}-${name}.md`;
   const relative = path.join(config.docs.plans, 'active', filename);
@@ -15,7 +15,7 @@ export async function createPlan(root: string, config: AgentDocsConfig, input: s
   return { name, path: relative, files: [relative] };
 }
 
-export async function completePlan(root: string, config: AgentDocsConfig, filenameOrName: string): Promise<ChangeResult> {
+export async function completePlan(root: string, config: CodeMementoConfig, filenameOrName: string): Promise<ChangeResult> {
   const activeDir = path.join(root, config.docs.plans, 'active');
   const completedDir = path.join(root, config.docs.plans, 'completed');
   const candidates = [filenameOrName, `${filenameOrName}.md`];

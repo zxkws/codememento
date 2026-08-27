@@ -1,4 +1,4 @@
-# Contributing to AgentDocs
+# Contributing to CodeMemento
 
 Thanks for helping make repositories easier for coding agents and humans to
 understand.
@@ -13,8 +13,8 @@ pnpm check
 Useful focused commands:
 
 ```bash
-pnpm --filter @agentdocs/core test
-pnpm --filter @agentdocs/cli build
+pnpm --filter @codememento/core test
+pnpm --filter @codememento/cli build
 node packages/cli/dist/cli.js --help
 ```
 

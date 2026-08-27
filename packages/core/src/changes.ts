@@ -1,11 +1,11 @@
 import { mkdir, readdir, rename } from 'node:fs/promises';
 import path from 'node:path';
-import type { AgentDocsConfig, ChangeResult } from './types.js';
+import type { CodeMementoConfig, ChangeResult } from './types.js';
 import { changeTemplates } from './templates.js';
 import { exists, writeText } from './fs.js';
 import { slugify } from './naming.js';
 
-export async function createChange(root: string, config: AgentDocsConfig, input: string): Promise<ChangeResult> {
+export async function createChange(root: string, config: CodeMementoConfig, input: string): Promise<ChangeResult> {
   const name = slugify(input, 'Change name');
   const relativeDir = path.join(config.docs.changes, 'active', name);
   const targetDir = path.join(root, relativeDir);
@@ -19,7 +19,7 @@ export async function createChange(root: string, config: AgentDocsConfig, input:
   return { name, path: relativeDir, files };
 }
 
-export async function archiveChange(root: string, config: AgentDocsConfig, input: string): Promise<ChangeResult> {
+export async function archiveChange(root: string, config: CodeMementoConfig, input: string): Promise<ChangeResult> {
   const name = slugify(input, 'Change name');
   const activeRelative = path.join(config.docs.changes, 'active', name);
   const completedRelative = path.join(config.docs.changes, 'completed', name);

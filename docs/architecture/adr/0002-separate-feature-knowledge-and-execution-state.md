@@ -12,7 +12,7 @@ recovery harder to reason about.
 
 ## Decision
 
-AgentDocs models Feature documentation and ExecPlans separately.
+CodeMemento models Feature documentation and ExecPlans separately.
 
 Feature packages contain durable specification, design, implementation
 strategy, tasks, and feature-local decisions. ExecPlans are living records of

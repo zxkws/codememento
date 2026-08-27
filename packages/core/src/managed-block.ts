@@ -1,7 +1,7 @@
 export function markers(id: string): { start: string; end: string } {
   return {
-    start: `<!-- agentdocs:${id}:start -->`,
-    end: `<!-- agentdocs:${id}:end -->`,
+    start: `<!-- codememento:${id}:start -->`,
+    end: `<!-- codememento:${id}:end -->`,
   };
 }
 
@@ -19,7 +19,7 @@ export function upsertManagedBlock(existing: string, id: string, content: string
   const startCount = existing.split(start).length - 1;
   const endCount = existing.split(end).length - 1;
   if (startCount !== endCount || startCount > 1 || (endIndex >= 0 && endIndex < startIndex)) {
-    throw new Error(`Malformed AgentDocs managed block for adapter "${id}". Fix the markers before running sync.`);
+    throw new Error(`Malformed CodeMemento managed block for adapter "${id}". Fix the markers before running sync.`);
   }
 
   if (startIndex >= 0 && endIndex >= startIndex) {
@@ -38,7 +38,7 @@ export function extractManagedBlock(existing: string, id: string): string | unde
   const startCount = existing.split(start).length - 1;
   const endCount = existing.split(end).length - 1;
   if (startCount !== endCount || startCount > 1 || (endIndex >= 0 && endIndex < startIndex)) {
-    throw new Error(`Malformed AgentDocs managed block for adapter "${id}".`);
+    throw new Error(`Malformed CodeMemento managed block for adapter "${id}".`);
   }
   if (startIndex < 0 || endIndex < startIndex) return undefined;
   return existing.slice(startIndex, endIndex + end.length);

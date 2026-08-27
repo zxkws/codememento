@@ -1,12 +1,12 @@
 {
-  "name": "agentdocs",
+  "name": "codememento",
   "version": "0.0.0",
   "private": true,
-  "description": "AI-native repository documentation infrastructure.",
+  "description": "Durable repository memory for AI coding agents.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zxkws/agentdocs.git"
+    "url": "https://github.com/zxkws/codememento.git"
   },
   "packageManager": "pnpm@10.33.0",
   "engines": {
@@ -14,11 +14,11 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm --filter @agentdocs/cli dev",
+    "dev": "pnpm --filter @codememento/cli dev",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm -r --if-present smoke",
     "clean": "pnpm -r clean"
   },
   "devDependencies": {

@@ -1,10 +1,10 @@
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
-import type { AgentDocsConfig, ChangeResult } from './types.js';
+import type { CodeMementoConfig, ChangeResult } from './types.js';
 import { exists, writeText } from './fs.js';
 import { slugify } from './naming.js';
 
-export async function createAdr(root: string, config: AgentDocsConfig, title: string): Promise<ChangeResult> {
+export async function createAdr(root: string, config: CodeMementoConfig, title: string): Promise<ChangeResult> {
   const adrDir = path.join(root, config.docs.adr);
   const entries = await readdir(adrDir).catch(() => []);
   const numbers = entries.map((entry) => Number.parseInt(entry.slice(0, 4), 10)).filter(Number.isFinite);

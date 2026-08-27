@@ -4,9 +4,9 @@
 
 The workspace has two publishable packages:
 
-- `@agentdocs/core` owns repository detection, configuration, templates,
+- `@codememento/core` owns repository detection, configuration, templates,
   lifecycle operations, adapters, inspection, diagnostics, and status.
-- `@agentdocs/cli` owns the `docs` executable and terminal/JSON output.
+- `@codememento/cli` owns the `docs` executable and terminal/JSON output.
 
 All core behavior is deterministic and filesystem-based. The CLI delegates
 repository semantics to core so IDE integrations and other tools can embed the
@@ -14,7 +14,7 @@ same behavior later.
 
 ## Data flow
 
-AgentDocs separates repository knowledge into complementary layers:
+CodeMemento separates repository knowledge into complementary layers:
 
 - `AGENTS.md`: short navigation and repository operating rules.
 - `docs/index.md`: project knowledge entry point and authority order.
@@ -25,7 +25,7 @@ AgentDocs separates repository knowledge into complementary layers:
 - `docs/generated/`: regenerable, explicitly lower-authority material.
 
 Agent-specific files are thin adapters around one canonical instruction map.
-AgentDocs synchronizes only its managed marker region and preserves all other
+CodeMemento synchronizes only its managed marker region and preserves all other
 content.
 
 ## Compatibility

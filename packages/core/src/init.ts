@@ -15,9 +15,9 @@ export async function initRepository(root: string): Promise<InitResult> {
 
   if (!(await configExists(root))) {
     await writeDefaultConfig(root, { adoptExisting: adoptedExisting });
-    result.created.push('.agentdocs/config.yaml');
+    result.created.push('.codememento/config.yaml');
   } else {
-    result.preserved.push('.agentdocs/config.yaml');
+    result.preserved.push('.codememento/config.yaml');
   }
 
   const config = await loadConfig(root);

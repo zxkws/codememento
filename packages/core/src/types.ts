@@ -16,7 +16,7 @@ export interface RepositoryDetection {
   monorepo: boolean;
 }
 
-export interface AgentDocsConfig {
+export interface CodeMementoConfig {
   version: 1;
   canonicalInstructions: string;
   docs: {
