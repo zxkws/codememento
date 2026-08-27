@@ -3,6 +3,7 @@ import path from 'node:path';
 import { BUILTIN_ADAPTERS } from './adapters.js';
 import { detectRepository } from './detect.js';
 import { exists, readTextIfExists } from './fs.js';
+import { branchMatchesPolicy, gitRefExists, inspectGitWorkspace } from './git.js';
 import { renderManagedBlock } from './managed-block.js';
 import type { CodeMementoConfig, Diagnostic, DoctorResult, Severity } from './types.js';
 
@@ -118,6 +119,62 @@ async function checkRetiredPaths(root: string, config: CodeMementoConfig): Promi
   return diagnostics;
 }
 
+async function hasActiveExecutionPlan(root: string, config: CodeMementoConfig): Promise<boolean> {
+  const activeDir = path.join(root, config.docs.plans, 'active');
+  if (!(await exists(activeDir))) return false;
+  const entries = await readdir(activeDir, { withFileTypes: true });
+  return entries.some((entry) => entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'README.md');
+}
+
+async function checkGitWorkflow(root: string, config: CodeMementoConfig): Promise<Diagnostic[]> {
+  const severity = governanceSeverity(config.governance.gitWorkflow);
+  if (!severity) return [];
+
+  const diagnostics: Diagnostic[] = [];
+  const workspace = await inspectGitWorkspace(root);
+  if (!workspace.repository) return diagnostics;
+
+  const { remote, baseBranch, branch, protectedBranches, worktree } = config.development.git;
+  const baseExists = await gitRefExists(root, `refs/heads/${baseBranch}`)
+    || await gitRefExists(root, `refs/remotes/${remote}/${baseBranch}`);
+  if (!baseExists) {
+    diagnostics.push({
+      code: 'git-base-branch',
+      severity,
+      message: `Configured base branch is not available locally or on ${remote}: ${baseBranch}`,
+    });
+  }
+
+  const activeWork = workspace.dirty || await hasActiveExecutionPlan(root, config);
+  if (!activeWork || !workspace.branch) return diagnostics;
+
+  if (branch.required && protectedBranches.includes(workspace.branch)) {
+    diagnostics.push({
+      code: 'protected-branch-work',
+      severity,
+      message: `Active work must not be performed directly on protected branch: ${workspace.branch}`,
+    });
+    return diagnostics;
+  }
+
+  if (branch.required && !branchMatchesPolicy(config, workspace.branch)) {
+    diagnostics.push({
+      code: 'branch-name-policy',
+      severity,
+      message: `Current branch does not match configured project branch patterns: ${workspace.branch}`,
+    });
+  }
+
+  if (worktree.mode === 'required' && !workspace.linkedWorktree) {
+    diagnostics.push({
+      code: 'worktree-required',
+      severity,
+      message: 'Active development must use a linked Git worktree in this project.',
+    });
+  }
+  return diagnostics;
+}
+
 export async function doctor(root: string, config: CodeMementoConfig): Promise<DoctorResult> {
   const diagnostics: Diagnostic[] = [];
 
@@ -187,6 +244,7 @@ export async function doctor(root: string, config: CodeMementoConfig): Promise<D
   if (linkSeverity) diagnostics.push(...await checkLinks(root, config.docs.root, linkSeverity));
   diagnostics.push(...await checkActivePlans(root, config));
   diagnostics.push(...await checkRetiredPaths(root, config));
+  diagnostics.push(...await checkGitWorkflow(root, config));
 
   const errors = diagnostics.filter((item) => item.severity === 'error').length;
   const warnings = diagnostics.filter((item) => item.severity === 'warning').length;

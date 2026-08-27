@@ -39,6 +39,9 @@ It separates:
 docs inspect              Read-only maturity assessment; works before init
 docs init                 Initialize a repository without replacing existing docs
 docs sync                 Synchronize coding-agent adapters
+docs workspace            Show current branch/worktree and project Git policy
+docs start <kind> <name>  Create a standard branch, worktree, and ExecPlan
+docs finish [plan]        Verify current work and complete its ExecPlan
 docs status               Show active work and documentation health
 docs new <name>           Create an active change workspace
 docs archive <name>       Validate and archive a completed change
@@ -52,6 +55,39 @@ docs check                CI-friendly validation with non-zero exit on errors
 
 Every command supports `-C, --cwd <path>`. `inspect`, `status`, `doctor`, and
 `check` support `--json` for scripts and integrations.
+
+## Project-owned development workflow
+
+CodeMemento can make Git workflow part of repository policy instead of leaving
+branch and worktree decisions to each coding agent.
+
+```bash
+# From the primary repository worktree
+docs start feature station-attachments
+
+# CodeMemento creates a project-standard branch/worktree and an ExecPlan.
+# Continue development in the printed worktree path.
+
+docs workspace
+docs finish
+```
+
+The default branch patterns describe the work, not the agent:
+
+```text
+feature/{slug}
+fix/{slug}
+refactor/{slug}
+docs/{slug}
+chore/{slug}
+```
+
+That means `feature/station-attachments` is preferred over agent-owned names
+such as `codex/station-attachments` or `claude/station-attachments`.
+
+`docs finish` runs CodeMemento checks and configured verification commands, then
+completes the matching ExecPlan. It deliberately does not commit, push, merge,
+delete branches, or remove worktrees.
 
 ## Adopt an existing repository safely
 
@@ -195,6 +231,35 @@ plans:
     - Decisions
     - Verification
 
+development:
+  git:
+    remote: origin
+    baseBranch: main
+    protectedBranches:
+      - main
+      - release
+      - development
+    fetchBeforeStart: true
+    branch:
+      required: true
+      patterns:
+        feature: feature/{slug}
+        fix: fix/{slug}
+        refactor: refactor/{slug}
+        docs: docs/{slug}
+        chore: chore/{slug}
+    worktree:
+      mode: preferred # required | preferred | off
+      root: ../.worktrees
+    actions:
+      commit: ask       # allow | ask | forbid
+      push: ask
+      merge: ask
+      deleteBranch: ask
+  finish:
+    commands: []
+    completePlan: true
+
 governance:
   missingStructure: warn
   brokenLinks: warn
@@ -204,6 +269,7 @@ governance:
   activePlanShape: error
   completedPlanInActive: error
   retiredPaths: warn
+  gitWorkflow: warn
 
 retiredPaths: []
 ```

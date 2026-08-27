@@ -14,6 +14,46 @@ const artifactFile = z.string().min(1).refine(
   'must be a file name, not a path',
 );
 
+const branchPattern = z.string().min(1).refine(
+  (value) => value.includes('{slug}'),
+  'must contain the {slug} placeholder',
+);
+
+const gitActionPolicy = z.enum(['allow', 'ask', 'forbid']);
+
+const DEFAULT_DEVELOPMENT: CodeMementoConfig['development'] = {
+  git: {
+    remote: 'origin',
+    baseBranch: 'main',
+    protectedBranches: ['main', 'master', 'release', 'development'],
+    fetchBeforeStart: true,
+    branch: {
+      required: true,
+      patterns: {
+        feature: 'feature/{slug}',
+        fix: 'fix/{slug}',
+        refactor: 'refactor/{slug}',
+        docs: 'docs/{slug}',
+        chore: 'chore/{slug}',
+      },
+    },
+    worktree: {
+      mode: 'preferred',
+      root: '../.worktrees',
+    },
+    actions: {
+      commit: 'ask',
+      push: 'ask',
+      merge: 'ask',
+      deleteBranch: 'ask',
+    },
+  },
+  finish: {
+    commands: [],
+    completePlan: true,
+  },
+};
+
 const configSchema = z.object({
   version: z.literal(1),
   canonicalInstructions: repoPath,
@@ -41,6 +81,38 @@ const configSchema = z.object({
   changes: z.object({ required: z.array(artifactFile).min(1) }),
   features: z.object({ required: z.array(artifactFile).min(1) }),
   plans: z.object({ requiredHeadings: z.array(z.string().min(1)).min(1) }),
+  development: z.object({
+    git: z.object({
+      remote: z.string().min(1),
+      baseBranch: z.string().min(1),
+      protectedBranches: z.array(z.string().min(1)),
+      fetchBeforeStart: z.boolean(),
+      branch: z.object({
+        required: z.boolean(),
+        patterns: z.object({
+          feature: branchPattern,
+          fix: branchPattern,
+          refactor: branchPattern,
+          docs: branchPattern,
+          chore: branchPattern,
+        }),
+      }),
+      worktree: z.object({
+        mode: z.enum(['required', 'preferred', 'off']),
+        root: z.string().min(1),
+      }),
+      actions: z.object({
+        commit: gitActionPolicy,
+        push: gitActionPolicy,
+        merge: gitActionPolicy,
+        deleteBranch: gitActionPolicy,
+      }),
+    }),
+    finish: z.object({
+      commands: z.array(z.string().min(1)),
+      completePlan: z.boolean(),
+    }),
+  }).default(DEFAULT_DEVELOPMENT),
   governance: z.object({
     missingStructure: z.enum(['off', 'warn', 'error']).default('warn'),
     brokenLinks: z.enum(['off', 'warn', 'error']),
@@ -50,6 +122,7 @@ const configSchema = z.object({
     activePlanShape: z.enum(['off', 'warn', 'error']),
     completedPlanInActive: z.enum(['off', 'warn', 'error']),
     retiredPaths: z.enum(['off', 'warn', 'error']),
+    gitWorkflow: z.enum(['off', 'warn', 'error']).default('warn'),
   }),
   retiredPaths: z.array(z.string()),
 });
@@ -87,6 +160,7 @@ export const DEFAULT_CONFIG: CodeMementoConfig = {
   plans: {
     requiredHeadings: ['Goal', 'Status', 'Progress', 'Decisions', 'Verification'],
   },
+  development: structuredClone(DEFAULT_DEVELOPMENT),
   governance: {
     missingStructure: 'warn',
     brokenLinks: 'warn',
@@ -96,6 +170,7 @@ export const DEFAULT_CONFIG: CodeMementoConfig = {
     activePlanShape: 'error',
     completedPlanInActive: 'error',
     retiredPaths: 'warn',
+    gitWorkflow: 'warn',
   },
   retiredPaths: [],
 };

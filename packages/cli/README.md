@@ -17,6 +17,18 @@ docs doctor
 docs check
 ```
 
+Project-owned development workflow is available in v0.2:
+
+```bash
+docs workspace
+docs start feature payment-orders
+docs finish
+```
+
+`docs start` applies repository branch/worktree policy and creates an ExecPlan;
+`docs finish` verifies and completes the Plan without committing, pushing,
+merging, deleting branches, or removing worktrees.
+
 The CLI preserves user-authored documentation, uses managed regions for
 agent-specific instruction files, works offline by default, and delegates
 repository behavior to `@codememento/core`.

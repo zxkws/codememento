@@ -13,11 +13,15 @@ import {
   createFeature,
   createPlan,
   doctor,
+  finishDevelopmentWork,
   inspectRepository,
+  inspectGitWorkspace,
   initRepository,
   loadConfig,
   repositoryStatus,
+  startDevelopmentWork,
   syncAdapters,
+  type WorkKind,
 } from '@codememento/core';
 
 const program = new Command();
@@ -25,7 +29,9 @@ const program = new Command();
 program
   .name('docs')
   .description('AI-native repository documentation infrastructure')
-  .version('0.1.0');
+  .version('0.2.0');
+
+const WORK_KINDS: WorkKind[] = ['feature', 'fix', 'refactor', 'docs', 'chore'];
 
 function rootFrom(options: { cwd?: string }): string {
   return path.resolve(process.cwd(), options.cwd ?? '.');
@@ -98,6 +104,69 @@ addCwd(program.command('sync').description('synchronize enabled coding-agent ada
       const result = await syncAdapters(root, config);
       for (const file of result.updated) console.log(`${pc.cyan('~')} ${file}`);
       if (!result.updated.length) console.log(pc.green('All adapters are synchronized.'));
+    } catch (error) {
+      printError(error);
+    }
+  });
+
+addCwd(program.command('workspace').description('show the current Git workspace and branch policy state'))
+  .option('--json', 'print machine-readable JSON')
+  .action(async (options) => {
+    try {
+      const root = rootFrom(options);
+      const config = await requireConfig(root);
+      const workspace = await inspectGitWorkspace(root);
+      const result = { workspace, development: config.development };
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+      if (!workspace.repository) {
+        console.log(pc.yellow('Not a Git worktree.'));
+        return;
+      }
+      console.log(pc.bold(`Branch: ${workspace.branch ?? '(detached)'}`));
+      console.log(`Worktree: ${workspace.linkedWorktree ? 'linked' : 'primary'}`);
+      console.log(`Dirty: ${workspace.dirty ? 'yes' : 'no'}`);
+      console.log(`Base branch: ${config.development.git.baseBranch}`);
+      console.log(`Worktree policy: ${config.development.git.worktree.mode}`);
+    } catch (error) {
+      printError(error);
+    }
+  });
+
+addCwd(program.command('start <kind> <name>').description('create a project-standard branch, worktree, and execution plan'))
+  .action(async (kind: string, name: string, options) => {
+    try {
+      if (!WORK_KINDS.includes(kind as WorkKind)) {
+        throw new Error(`Unknown work kind: ${kind}. Expected one of: ${WORK_KINDS.join(', ')}`);
+      }
+      const root = rootFrom(options);
+      const config = await requireConfig(root);
+      const result = await startDevelopmentWork(root, config, kind as WorkKind, name);
+      console.log(pc.bold('Development workspace created'));
+      console.log(`${pc.green('✓')} Branch: ${result.branch}`);
+      console.log(`${pc.green('✓')} Base: ${result.baseRef}`);
+      console.log(`${pc.green('✓')} Worktree: ${result.worktree}`);
+      console.log(`${pc.green('✓')} ExecPlan: ${result.plan}`);
+      if (result.feature) console.log(`${pc.green('✓')} Feature: ${result.feature}`);
+      console.log(pc.dim(`Continue in: ${result.worktree}`));
+    } catch (error) {
+      printError(error);
+    }
+  });
+
+addCwd(program.command('finish [plan]').description('verify the current development workspace and complete its execution plan'))
+  .action(async (planName: string | undefined, options) => {
+    try {
+      const root = rootFrom(options);
+      const config = await requireConfig(root);
+      const result = await finishDevelopmentWork(root, config, planName);
+      console.log(pc.green('Development work verified.'));
+      console.log(`Branch: ${result.branch}`);
+      for (const command of result.commands) console.log(`${pc.green('✓')} ${command}`);
+      if (result.plan) console.log(`${pc.green('✓')} Completed plan: ${result.plan}`);
+      console.log(pc.dim('No commit, push, merge, branch deletion, or worktree removal was performed.'));
     } catch (error) {
       printError(error);
     }

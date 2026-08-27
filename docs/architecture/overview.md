@@ -8,8 +8,9 @@ CodeMemento is a TypeScript monorepo with two publishable packages.
 
 Owns configuration, repository detection, templates, managed blocks, adapters,
 read-only inspection, Feature/ExecPlan/Change lifecycle operations, ADR
-creation, repository status, diagnostics, and CI checks. Core has no
-interactive UI and can be embedded by other tools.
+creation, repository status, Git workspace inspection, development lifecycle,
+diagnostics, and CI checks. Core has no interactive UI and can be embedded by
+other tools.
 
 ### `@codememento/cli`
 
@@ -76,6 +77,21 @@ Durable Feature knowledge and temporary execution state are separate concepts.
 `docs plan new <name>` creates a self-contained active ExecPlan with Goal,
 Status, Progress, Decisions, and Verification. `docs plan complete <name>` marks
 the plan completed and moves it to historical completed plans.
+
+## Development workspace lifecycle
+
+Git workflow is repository-owned configuration rather than an agent default.
+The policy defines base/protected branches, branch naming patterns, worktree
+mode, finish verification, and permissions for commit/push/merge/delete actions.
+
+`docs start <kind> <name>` validates a clean source worktree, resolves the base
+ref, creates the configured branch/worktree, and creates execution state in the
+new workspace. `docs finish` validates the current workspace, runs configured
+verification, and completes its ExecPlan. It deliberately does not perform
+publishing or cleanup Git actions.
+
+Low-level Git inspection and policy matching live in `core/src/git.ts`; the
+mutating start/finish lifecycle lives in `core/src/development.ts`.
 
 ## Change lifecycle
 

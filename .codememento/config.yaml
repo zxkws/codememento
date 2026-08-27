@@ -41,6 +41,34 @@ plans:
     - Progress
     - Decisions
     - Verification
+development:
+  git:
+    remote: origin
+    baseBranch: main
+    protectedBranches:
+      - main
+      - release
+    fetchBeforeStart: true
+    branch:
+      required: true
+      patterns:
+        feature: feature/{slug}
+        fix: fix/{slug}
+        refactor: refactor/{slug}
+        docs: docs/{slug}
+        chore: chore/{slug}
+    worktree:
+      mode: required
+      root: ../.worktrees
+    actions:
+      commit: ask
+      push: ask
+      merge: ask
+      deleteBranch: ask
+  finish:
+    commands:
+      - pnpm check
+    completePlan: true
 governance:
   missingStructure: warn
   brokenLinks: warn
@@ -50,4 +78,5 @@ governance:
   activePlanShape: error
   completedPlanInActive: error
   retiredPaths: warn
+  gitWorkflow: error
 retiredPaths: []

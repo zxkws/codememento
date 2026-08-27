@@ -13,3 +13,5 @@ export * from './doctor.js';
 export * from './inspect.js';
 export * from './naming.js';
 export * from './status.js';
+export * from './git.js';
+export * from './development.js';

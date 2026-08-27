@@ -1,5 +1,11 @@
 export type AdapterName = 'agents' | 'claude' | 'copilot' | 'gemini' | 'cursor';
 
+export type WorkKind = 'feature' | 'fix' | 'refactor' | 'docs' | 'chore';
+
+export type WorktreeMode = 'required' | 'preferred' | 'off';
+
+export type GitActionPolicy = 'allow' | 'ask' | 'forbid';
+
 export type Severity = 'info' | 'warning' | 'error';
 
 export interface Diagnostic {
@@ -43,6 +49,32 @@ export interface CodeMementoConfig {
   plans: {
     requiredHeadings: string[];
   };
+  development: {
+    git: {
+      remote: string;
+      baseBranch: string;
+      protectedBranches: string[];
+      fetchBeforeStart: boolean;
+      branch: {
+        required: boolean;
+        patterns: Record<WorkKind, string>;
+      };
+      worktree: {
+        mode: WorktreeMode;
+        root: string;
+      };
+      actions: {
+        commit: GitActionPolicy;
+        push: GitActionPolicy;
+        merge: GitActionPolicy;
+        deleteBranch: GitActionPolicy;
+      };
+    };
+    finish: {
+      commands: string[];
+      completePlan: boolean;
+    };
+  };
   governance: {
     missingStructure: 'off' | 'warn' | 'error';
     brokenLinks: 'off' | 'warn' | 'error';
@@ -52,6 +84,7 @@ export interface CodeMementoConfig {
     activePlanShape: 'off' | 'warn' | 'error';
     completedPlanInActive: 'off' | 'warn' | 'error';
     retiredPaths: 'off' | 'warn' | 'error';
+    gitWorkflow: 'off' | 'warn' | 'error';
   };
   retiredPaths: string[];
 }
@@ -73,6 +106,31 @@ export interface ChangeResult {
   name: string;
   path: string;
   files: string[];
+}
+
+export interface GitWorkspaceInfo {
+  repository: boolean;
+  branch?: string;
+  dirty: boolean;
+  linkedWorktree: boolean;
+  topLevel?: string;
+}
+
+export interface DevelopmentStartResult {
+  kind: WorkKind;
+  name: string;
+  branch: string;
+  baseRef: string;
+  worktree: string;
+  plan: string;
+  feature?: string;
+}
+
+export interface DevelopmentFinishResult {
+  branch: string;
+  plan?: string;
+  commands: string[];
+  checksPassed: boolean;
 }
 
 export interface DoctorResult {
