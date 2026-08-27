@@ -1,0 +1,53 @@
+version: 1
+canonicalInstructions: AGENTS.md
+docs:
+  root: docs
+  product: docs/product
+  architecture: docs/architecture
+  adr: docs/architecture/adr
+  protocol: docs/protocol
+  features: docs/features
+  plans: docs/plans
+  quality: docs/quality
+  runbooks: docs/runbooks
+  changes: docs/changes
+  references: docs/references
+  generated: docs/generated
+agents:
+  agents: true
+  claude: true
+  copilot: true
+  gemini: true
+  cursor: false
+changes:
+  required:
+    - proposal.md
+    - spec.md
+    - design.md
+    - tasks.md
+    - test.md
+    - result.md
+features:
+  required:
+    - spec.md
+    - design.md
+    - plan.md
+    - tasks.md
+    - decisions.md
+plans:
+  requiredHeadings:
+    - Goal
+    - Status
+    - Progress
+    - Decisions
+    - Verification
+governance:
+  missingStructure: warn
+  brokenLinks: warn
+  missingChangeDocs: error
+  missingFeatureDocs: error
+  staleAdapters: warn
+  activePlanShape: error
+  completedPlanInActive: error
+  retiredPaths: warn
+retiredPaths: []

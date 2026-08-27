@@ -1,0 +1,58 @@
+{
+  "name": "@agentdocs/cli",
+  "version": "0.1.0",
+  "description": "Make any repository understandable by AI coding agents.",
+  "keywords": [
+    "ai",
+    "agents",
+    "documentation",
+    "docs-as-code",
+    "codex",
+    "claude",
+    "copilot",
+    "cli"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxkws/agentdocs.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/zxkws/agentdocs#readme",
+  "bugs": {
+    "url": "https://github.com/zxkws/agentdocs/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "docs": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --sourcemap --clean",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "pnpm --filter @agentdocs/core build && tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@agentdocs/core": "workspace:*",
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
