@@ -29,7 +29,7 @@ const program = new Command();
 program
   .name('docs')
   .description('AI-native repository documentation infrastructure')
-  .version('0.2.1');
+  .version('0.2.2');
 
 const WORK_KINDS: WorkKind[] = ['feature', 'fix', 'refactor', 'docs', 'chore'];
 

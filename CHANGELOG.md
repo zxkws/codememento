@@ -2,6 +2,12 @@
 
 All notable user-facing changes will be documented here.
 
+## 0.2.2 - 2026-08-27
+
+- Fixed manual npm publication so the public CLI package depends on a real core version instead of the private `workspace:*` protocol.
+- Added `pnpm pack:check` to verify packed core/CLI versions, CLI core dependency rewriting, absence of `workspace:` dependencies, and the `docs` executable before release.
+- Documented that manual releases must publish pnpm-generated tarballs rather than running `npm publish` directly inside a workspace package.
+
 ## 0.2.1 - 2026-08-27
 
 - Added `baseBranch: "@current"` for repositories whose primary worktree stays on the active development line.

@@ -18,7 +18,8 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm -r --if-present smoke",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm pack:check && pnpm -r --if-present smoke",
+    "pack:check": "node scripts/check-packed-packages.mjs",
     "clean": "pnpm -r clean"
   },
   "devDependencies": {
