@@ -85,6 +85,7 @@ export interface CodeMementoConfig {
     completedPlanInActive: 'off' | 'warn' | 'error';
     retiredPaths: 'off' | 'warn' | 'error';
     gitWorkflow: 'off' | 'warn' | 'error';
+    placeholderDocs: 'off' | 'warn' | 'error';
   };
   retiredPaths: string[];
 }
@@ -144,11 +145,13 @@ export interface InspectionResult {
   instructionFiles: string[];
   documentationPaths: string[];
   verificationFiles: string[];
+  placeholderDocuments: string[];
   signals: {
     canonicalAgentMap: boolean;
     docsIndex: boolean;
     productKnowledge: boolean;
     architectureKnowledge: boolean;
+    protocolKnowledge: boolean;
     decisions: boolean;
     features: boolean;
     executionPlans: boolean;

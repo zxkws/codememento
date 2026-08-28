@@ -1,8 +1,8 @@
 # CodeMemento repository instructions
 
-CodeMemento is an AI-native documentation infrastructure CLI. The public CLI is
-`docs`, published from `@codememento/cli`; reusable logic lives in
-`@codememento/core`.
+CodeMemento is durable repository memory for AI coding agents. The public CLI is
+`docs`, published from `@codememento/cli`; reusable repository knowledge and
+governance logic lives in `@codememento/core`.
 
 ## Required reading
 

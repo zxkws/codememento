@@ -2,6 +2,14 @@
 
 All notable user-facing changes will be documented here.
 
+## 0.3.0 - 2026-08-28
+
+- Added explicit `<!-- codememento:starter -->` markers for fillable canonical starter documents plus exact recognition of legacy 0.2.x starters.
+- Added configurable `placeholder-document` diagnostics via `governance.placeholderDocs`.
+- Made `inspect` distinguish meaningful Product/Architecture/Protocol/Quality knowledge from starter-only structure, with additive `placeholderDocuments` and `protocolKnowledge` JSON fields.
+- Reworked CodeMemento's own canonical Product, Protocol, Quality, index, Feature-maintenance, and monorepo documentation so the repository dogfoods the intended knowledge model.
+- Documented current monorepo support and explicit limitations without claiming a Component catalog or affected-package engine that does not yet exist.
+
 ## 0.2.3 - 2026-08-27
 
 - Extended `pnpm pack:check` to reject stale CLI build output when `dist/cli.js --version` does not equal the package version.

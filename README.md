@@ -104,14 +104,32 @@ npx @codememento/cli inspect
 
 `inspect` is read-only and does not require CodeMemento to be initialized. It
 recognizes common AI-native documentation signals such as `AGENTS.md`, a docs
-index, product/architecture knowledge, ADRs, feature packages, active/completed
-execution plans, runbooks, quality docs, generated docs, and deterministic docs
-verification.
+index, product/architecture/protocol knowledge, ADRs, feature packages,
+active/completed execution plans, runbooks, quality docs, generated docs, and
+deterministic docs verification.
+
+CodeMemento does not treat untouched canonical starter files as mature knowledge.
+New fillable starters carry `<!-- codememento:starter -->`; legacy 0.2.x starter
+text is recognized exactly. `inspect --json` reports `placeholderDocuments`, and
+`doctor/check` can report `placeholder-document` according to
+`governance.placeholderDocs`.
 
 If the repository already has a mature structure, CodeMemento can be adopted
 incrementally. In adoption mode, `docs init` writes CodeMemento configuration and
 managed adapter regions but does **not** add documentation templates to the
 existing knowledge system.
+
+## Monorepos
+
+Initialize CodeMemento once at the Git-repository root, including pnpm/npm/yarn
+workspaces, Nx, Turborepo, and similar monorepos. Branch/worktree policy and
+ExecPlans are repository-wide, so one task can span multiple apps/packages.
+
+CodeMemento currently detects monorepo/workspace shape but does **not** yet have
+a first-class Component catalog or its own affected-package dependency engine.
+Large monorepos should use their existing Nx/Turbo/other affected commands in
+`development.finish.commands`. See
+[monorepo support](docs/architecture/monorepo.md) for the exact current scope.
 
 ## What `docs init` creates
 
@@ -275,6 +293,7 @@ governance:
   completedPlanInActive: error
   retiredPaths: warn
   gitWorkflow: warn
+  placeholderDocs: warn
 
 retiredPaths: []
 ```

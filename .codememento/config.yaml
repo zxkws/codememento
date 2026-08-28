@@ -79,4 +79,5 @@ governance:
   completedPlanInActive: error
   retiredPaths: warn
   gitWorkflow: error
+  placeholderDocs: warn
 retiredPaths: []

@@ -123,6 +123,7 @@ const configSchema = z.object({
     completedPlanInActive: z.enum(['off', 'warn', 'error']),
     retiredPaths: z.enum(['off', 'warn', 'error']),
     gitWorkflow: z.enum(['off', 'warn', 'error']).default('warn'),
+    placeholderDocs: z.enum(['off', 'warn', 'error']).default('warn'),
   }),
   retiredPaths: z.array(z.string()),
 });
@@ -171,6 +172,7 @@ export const DEFAULT_CONFIG: CodeMementoConfig = {
     completedPlanInActive: 'error',
     retiredPaths: 'warn',
     gitWorkflow: 'warn',
+    placeholderDocs: 'warn',
   },
   retiredPaths: [],
 };

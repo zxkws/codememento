@@ -8,7 +8,9 @@ The workspace has two publishable packages:
   lifecycle operations, adapters, inspection, diagnostics, and status.
 - `@codememento/cli` owns the `docs` executable and terminal/JSON output.
 
-All core behavior is deterministic and filesystem-based. The CLI delegates
+Repository/document governance is deterministic and filesystem-based. Git
+workspace primitives are also deterministic but intentionally invoke local Git
+and may fetch when repository development policy enables it. The CLI delegates
 repository semantics to core so IDE integrations and other tools can embed the
 same behavior later.
 
@@ -34,4 +36,4 @@ content.
 - Works with repositories in any implementation language.
 - Existing documentation and instructions are preserved.
 - `docs inspect` works before initialization.
-- Core operation does not require Git, a network connection, or an AI provider.
+- Repository/document governance does not require an AI provider or network connection. Git development-workspace features require Git and may use an explicitly configured fetch.

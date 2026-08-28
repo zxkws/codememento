@@ -28,8 +28,8 @@ const program = new Command();
 
 program
   .name('docs')
-  .description('AI-native repository documentation infrastructure')
-  .version('0.2.3');
+  .description('Durable repository memory for AI coding agents')
+  .version('0.3.0');
 
 const WORK_KINDS: WorkKind[] = ['feature', 'fix', 'refactor', 'docs', 'chore'];
 
@@ -68,6 +68,7 @@ addCwd(program.command('inspect').description('inspect an existing repository wi
       console.log(`Detected: ${stack}${result.detection.monorepo ? ' (monorepo)' : ''}`);
       if (result.instructionFiles.length) console.log(`Instructions: ${result.instructionFiles.join(', ')}`);
       if (result.verificationFiles.length) console.log(`Docs verification: ${result.verificationFiles.join(', ')}`);
+      if (result.placeholderDocuments.length) console.log(`Starter docs: ${result.placeholderDocuments.join(', ')}`);
       if (result.recommendations.length) {
         console.log(pc.bold('Recommendations'));
         for (const recommendation of result.recommendations) console.log(`${pc.yellow('!')} ${recommendation}`);

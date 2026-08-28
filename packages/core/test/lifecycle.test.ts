@@ -39,6 +39,45 @@ describe('repository lifecycle', () => {
     expect(agents).toContain('codememento:agents:start');
   });
 
+  it('reports untouched starter documents as placeholders instead of mature knowledge', async () => {
+    const root = await tempRepo();
+    await initRepository(root);
+    const config = await loadConfig(root);
+
+    const inspection = await inspectRepository(root);
+    expect(inspection.placeholderDocuments).toEqual(expect.arrayContaining([
+      'docs/product/overview.md',
+      'docs/architecture/overview.md',
+      'docs/protocol/README.md',
+      'docs/quality/README.md',
+    ]));
+    expect(inspection.signals.productKnowledge).toBe(false);
+    expect(inspection.signals.architectureKnowledge).toBe(false);
+    expect(inspection.signals.protocolKnowledge).toBe(false);
+    expect(inspection.signals.quality).toBe(false);
+    expect(inspection.score).toBeLessThan(100);
+
+    const health = await doctor(root, config);
+    expect(health.diagnostics.filter((item) => item.code === 'placeholder-document')).toHaveLength(4);
+  });
+
+  it('does not treat documentation that only discusses the starter marker as a placeholder', async () => {
+    const root = await tempRepo();
+    await initRepository(root);
+    const config = await loadConfig(root);
+    await writeFile(
+      path.join(root, 'docs/protocol/README.md'),
+      '# Protocol\n\nA starter uses `<!-- codememento:starter -->`.\n\n```html\n<!-- codememento:starter -->\n```\n',
+      'utf8',
+    );
+
+    const inspection = await inspectRepository(root);
+    expect(inspection.placeholderDocuments).not.toContain('docs/protocol/README.md');
+    expect(inspection.signals.protocolKnowledge).toBe(true);
+    const health = await doctor(root, config);
+    expect(health.diagnostics.some((item) => item.code === 'placeholder-document' && item.path === 'docs/protocol/README.md')).toBe(false);
+  });
+
   it('creates, validates, and archives a change', async () => {
     const root = await tempRepo();
     await initRepository(root);
@@ -103,11 +142,15 @@ describe('repository lifecycle', () => {
     ]) await mkdir(path.join(root, dir), { recursive: true });
     await writeFile(path.join(root, 'AGENTS.md'), '# Agent map\n', 'utf8');
     await writeFile(path.join(root, 'docs/index.md'), '# Docs\n', 'utf8');
+    await writeFile(path.join(root, 'docs/product/product.md'), '# Product\n\nActual product knowledge.\n', 'utf8');
+    await writeFile(path.join(root, 'docs/architecture/system.md'), '# Architecture\n\nActual system boundaries.\n', 'utf8');
+    await writeFile(path.join(root, 'docs/quality/testing.md'), '# Quality\n\nActual verification gates.\n', 'utf8');
     await writeFile(path.join(root, 'scripts/check-docs.py'), '# check\n', 'utf8');
     const result = await inspectRepository(root);
     expect(result.initialized).toBe(false);
     expect(result.maturity).toBe('mature');
     expect(result.score).toBeGreaterThanOrEqual(80);
+    expect(result.signals.protocolKnowledge).toBe(false);
 
     const initialized = await initRepository(root);
     const config = await loadConfig(root);

@@ -49,6 +49,7 @@ describe('development workflow', () => {
     delete parsed.development;
     const governance = parsed.governance as Record<string, unknown>;
     delete governance.gitWorkflow;
+    delete governance.placeholderDocs;
     await writeFile(configPath, YAML.stringify(parsed), 'utf8');
 
     const config = await loadConfig(root);

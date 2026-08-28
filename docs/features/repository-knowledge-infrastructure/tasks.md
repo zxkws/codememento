@@ -1,14 +1,14 @@
-# Repository Knowledge Infrastructure: Tasks
+# Repository Knowledge Infrastructure: Capability checklist
 
-- [x] Create `@codememento/core` and `@codememento/cli` workspace.
-- [x] Implement safe managed-block initialization and synchronization.
-- [x] Implement repository stack detection and built-in agent adapters.
-- [x] Implement Feature, ExecPlan, Change, and ADR lifecycles.
-- [x] Implement doctor/check governance and CI workflow.
-- [x] Add feature-package, active-plan, retired-path, and link validation.
-- [x] Add read-only `docs inspect` and `docs status` with JSON output.
-- [x] Validate inspection against a mature real repository.
-- [x] Dogfood CodeMemento in its own repository.
-- [x] Validate npm package contents and executable behavior from packed tarballs.
-- [x] Run final code review and release-readiness checks.
-- [x] Synchronize README and architecture docs with the final CLI/config surface.
+- [x] Reusable `@codememento/core` and public `docs` CLI.
+- [x] Read-only repository/stack/monorepo inspection before initialization.
+- [x] Safe mature-repository adoption and configurable documentation paths.
+- [x] Managed instruction blocks that preserve user-authored content.
+- [x] Feature, ExecPlan, optional Change, and ADR lifecycles.
+- [x] Deterministic link, lifecycle, adapter, retired-path, Git-workflow, and placeholder-document diagnostics.
+- [x] Starter canonical documents that explicitly identify themselves until replaced with repository-specific content.
+- [x] JSON output for automation-oriented inspection/status/doctor/check surfaces.
+- [x] CI/package validation and public tarball integrity checks.
+- [x] Self-dogfooding in the CodeMemento repository.
+
+Keep this checklist aligned with currently supported durable behavior. Historical release tasks belong in completed ExecPlans and `CHANGELOG.md`.

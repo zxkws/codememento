@@ -5,6 +5,7 @@ import { detectRepository } from './detect.js';
 import { exists, readTextIfExists } from './fs.js';
 import { branchMatchesPolicy, gitRefExists, inspectGitWorkspace } from './git.js';
 import { renderManagedBlock } from './managed-block.js';
+import { isStarterPlaceholderFile } from './placeholders.js';
 import type { CodeMementoConfig, Diagnostic, DoctorResult, Severity } from './types.js';
 
 function governanceSeverity(value: 'off' | 'warn' | 'error'): Severity | undefined {
@@ -114,6 +115,31 @@ async function checkRetiredPaths(root: string, config: CodeMementoConfig): Promi
     const raw = await readFile(file, 'utf8');
     for (const marker of config.retiredPaths) {
       if (raw.includes(marker)) diagnostics.push({ code: 'retired-path', severity, message: `Current documentation references retired path: ${marker}`, path: path.relative(root, file) });
+    }
+  }
+  return diagnostics;
+}
+
+
+async function checkPlaceholderDocuments(root: string, config: CodeMementoConfig): Promise<Diagnostic[]> {
+  const severity = governanceSeverity(config.governance.placeholderDocs);
+  if (!severity) return [];
+  const candidates = [
+    path.join(config.docs.product, 'overview.md'),
+    path.join(config.docs.architecture, 'overview.md'),
+    path.join(config.docs.protocol, 'README.md'),
+    path.join(config.docs.quality, 'README.md'),
+  ];
+  const diagnostics: Diagnostic[] = [];
+  for (const candidate of candidates) {
+    const file = path.join(root, candidate);
+    if (await isStarterPlaceholderFile(file)) {
+      diagnostics.push({
+        code: 'placeholder-document',
+        severity,
+        message: 'Canonical documentation still contains CodeMemento starter content; replace it with repository-specific knowledge and remove the starter marker.',
+        path: candidate,
+      });
     }
   }
   return diagnostics;
@@ -250,6 +276,7 @@ export async function doctor(root: string, config: CodeMementoConfig): Promise<D
   if (linkSeverity) diagnostics.push(...await checkLinks(root, config.docs.root, linkSeverity));
   diagnostics.push(...await checkActivePlans(root, config));
   diagnostics.push(...await checkRetiredPaths(root, config));
+  diagnostics.push(...await checkPlaceholderDocuments(root, config));
   diagnostics.push(...await checkGitWorkflow(root, config));
 
   const errors = diagnostics.filter((item) => item.severity === 'error').length;

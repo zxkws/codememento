@@ -17,7 +17,7 @@ docs doctor
 docs check
 ```
 
-Project-owned development workflow is available in v0.2:
+Project-owned development workflow:
 
 ```bash
 docs workspace
@@ -30,8 +30,8 @@ docs finish
 merging, deleting branches, or removing worktrees.
 
 The CLI preserves user-authored documentation, uses managed regions for
-agent-specific instruction files, works offline by default, and delegates
-repository behavior to `@codememento/core`.
+agent-specific instruction files, identifies untouched canonical starter docs,
+works offline-first, and delegates repository behavior to `@codememento/core`.
 
 See the CodeMemento repository README for the complete command and configuration
 reference.
